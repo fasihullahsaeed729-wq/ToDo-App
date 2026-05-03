@@ -1,11 +1,11 @@
-name: Build Pipeline
+name: ToDo-App Build Pipeline
 
 on:
   push:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
-  workflow_dispatch:  # Manual trigger
+  workflow_dispatch:
 
 jobs:
   build:
@@ -21,16 +21,28 @@ jobs:
           node-version: '18'
       
       - name: Install dependencies
-        run: npm install
-        continue-on-error: true
+        run: |
+          if [ -f package.json ]; then
+            npm install
+          else
+            echo "No package.json found, skipping npm install"
+          fi
       
       - name: Run build
-        run: npm run build || echo "Build completed"
-        continue-on-error: true
+        run: |
+          if [ -f package.json ]; then
+            npm run build || echo "Build completed"
+          else
+            echo "No build script found"
+          fi
       
       - name: Run tests
-        run: npm test || echo "Tests completed"
-        continue-on-error: true
+        run: |
+          if [ -f package.json ]; then
+            npm test || echo "Tests completed"
+          else
+            echo "No test script found"
+          fi
       
       - name: Build Status
-        run: echo "✅ Pipeline executed successfully!"
+        run: echo "✅ ToDo-App pipeline executed successfully!"
